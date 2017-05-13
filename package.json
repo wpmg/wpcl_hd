@@ -1,0 +1,22 @@
+{
+  "name": "hd",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wpmg/wpcl_hd"
+  },
+  "description": "WPCL Server",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "WPMG",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^2.2.26"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  }
+}
