@@ -1,1 +1,7 @@
 sensitivity.js
+app/sensitive/
+node_modules/
+app/public/
+app/config/
+
+.idea/
