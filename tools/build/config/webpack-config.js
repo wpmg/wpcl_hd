@@ -50,15 +50,7 @@ var webpackConfig = {
                     cacheDirectory: true,
                     presets: ['react']
                 }
-            }/*,
-            {
-                test: require.resolve('jquery'),
-                loader: 'expose-loader?jQuery'
-            },
-            {
-                test: require.resolve('d3'),
-                loader: 'expose-loader?d3'
-            }*/
+            }
         ]
     },
     externals: {
