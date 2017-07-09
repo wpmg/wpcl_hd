@@ -20,9 +20,9 @@ gulp.task('build:scss', function () {
         .pipe(changed(SCSS_BUILD_FOLDER, {extension: '.scss'}))
         .pipe(plumber())
         .pipe(sourcemap.init())
-        .pipe(sass({outputStyle: 'expanded'}).on('error', sass.logError))
-        .pipe(autoprefixer())        
-        .pipe(sourcemap.write())
+        .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+        .pipe(autoprefixer())
+        .pipe(sourcemap.write('./maps'))
         .pipe(gulp.dest(SCSS_BUILD_FOLDER));
 });
 

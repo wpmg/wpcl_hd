@@ -15,8 +15,8 @@ import assetsManager from './infra/assets-manager';
 const app = express();
 
 mongoose.connect(
-   db_configuration.uri,
-   db_configuration.opts
+  db_configuration.uri,
+  db_configuration.opts
 );
 
 configManager.handle(app);
@@ -27,5 +27,5 @@ assetsManager.handle(app);
 routeManager.handle(app, passport);
 
 app.listen(nconf.get('port'), () => {
-    console.log('Listening on http://' + nconf.get('host') + ':' + nconf.get('port'));    
+  console.log('Listening on http://' + nconf.get('host') + ':' + nconf.get('port'));    
 });

@@ -1,3 +1,5 @@
+import Disk from '../models/disk';
+
 const IsAuthenticated = (authority) => {
   return (req, res, next) => {
     if (typeof authority === 'undefined') {
@@ -9,7 +11,7 @@ const IsAuthenticated = (authority) => {
         return next();
       }
     }
-    
+
     console.log('Unauthorized API attempt');
     res.json({error: 'Authentication failed.'});
   };
@@ -18,6 +20,10 @@ const IsAuthenticated = (authority) => {
 const Api = (router) => {
   router.get('/disk/:id', IsAuthenticated(3), (req, res) => {
     if (req.params.id === 'all') {
+      Disk.find({}, '-attr-section', (err, result) => {
+        res.json({'disks': result});
+      });
+      /*
       res.json({
         "disks": [
           {
@@ -31,7 +37,7 @@ const Api = (router) => {
             "temp": "82"
           }
         ]
-      });
+      });*/
     }
   });
 

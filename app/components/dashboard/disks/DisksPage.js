@@ -1,5 +1,5 @@
-import React, {PropTypes} from 'react';  
-import {connect} from 'react-redux'; 
+import React, {PropTypes} from 'react';
+import {connect} from 'react-redux';
 
 import {ActionLoadDisks} from '../../../apis/capi_disks';
 
@@ -14,17 +14,21 @@ class DisksPage extends React.Component {
   render() {
     return (
       <div>
-        <h1>Disk list</h1>
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Temp</th>
-            </tr>
-          </thead>
-          <DiskList disks={this.props.disks} />
-        </table>
+        <h1>Active disks</h1>
+        <div className='table-responsive'>
+          <table className='table table-striped table-condensed'>
+            <thead>
+              <tr>
+                <th>Model <small>Serial No</small></th>
+                <th>Internal</th>
+                <th>Location</th>
+                <th>Added</th>
+                <th>Last seen</th>
+              </tr>
+            </thead>
+            <DiskList disks={this.props.disks} />
+          </table>
+        </div>
       </div>
     );
   }
@@ -40,4 +44,4 @@ const MapStateToProps = (state /* , ownProps */) => {
   };
 };
 
-export default connect(MapStateToProps)(DisksPage);  
+export default connect(MapStateToProps)(DisksPage);
