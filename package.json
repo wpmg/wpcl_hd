@@ -35,7 +35,6 @@
     "browser-sync": "^2.18.12",
     "chokidar-cli": "^1.2.0",
     "eslint": "^4.1.1",
-    "eslint-loader": "^1.9.0",
     "eslint-plugin-react": "^7.1.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^4.0.0",
@@ -75,5 +74,33 @@
     "passport-local": "^1.0.0",
     "redux": "^3.7.1",
     "redux-thunk": "^2.2.0"
+  },
+  "eslintConfig": {
+    "extends": ["eslint:recommended", "plugin:react/recommended"],
+    "env": {
+      "browser": true,
+      "node": true,
+      "es6": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 6,
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "jsx": true
+      }
+    },
+    "plugins": ["react"],
+    "rules": {
+      "quotes": [
+        2,
+        "single"
+      ],
+      "indent": [
+        1,
+        2
+      ],
+      "no-console": 0,
+      "no-unused-vars": 1
+    }
   }
 }

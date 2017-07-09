@@ -32,14 +32,6 @@ var webpackConfig = {
     module: {
         rules: [
             {
-                enforce: "pre",
-                test: /\.js$/,
-                include: [
-                    APP_FOLDER
-                ],
-                loader: 'eslint-loader'
-            },
-            {
                 test: /\.js$/,
                 include: [
                     APP_FOLDER
@@ -62,14 +54,6 @@ var webpackConfig = {
     },
     plugins: [
         new webpack.NoEmitOnErrorsPlugin(),
-        new webpack.LoaderOptionsPlugin({
-            options: {
-                eslint: {
-                    configFile: ESLINT_CONFIG_FILE
-                }
-            },
-            debug: true
-        }),
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery'
