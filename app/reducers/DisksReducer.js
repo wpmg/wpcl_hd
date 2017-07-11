@@ -1,12 +1,12 @@
-import initial_state from './initial_state';
+import initialState from './initial_state';
 
-const DisksReducer = (state = initial_state.disks, action) => {
+const DisksReducer = (state = initialState.disks, action) => {
   switch (action.type) {
-  case 'LOAD_DISKS_SUCCESS':
-    return action.disks;
+    case 'LOAD_DISKS_SUCCESS':
+      return action.disks;
 
-  default:
-    return state;
+    default:
+      return state;
   }
 };
 

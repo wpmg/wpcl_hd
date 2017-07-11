@@ -1,10 +1,9 @@
-import React, {PropTypes} from 'react';
-import {connect} from 'react-redux';
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
-import {ActionLoadDisks} from '../../../apis/capi_disks';
+import { ActionLoadDisks } from '../../../apis/capi_disks';
 
 import DiskList from './DiskList';
-// import * as catActions from '../../actions/catActions';
 
 class DisksPage extends React.Component {
   componentWillMount() {
