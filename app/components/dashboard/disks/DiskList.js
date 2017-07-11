@@ -1,5 +1,6 @@
-import React, {PropTypes} from 'react';
-import {Link} from 'react-router';
+import React from 'react';
+import {Link} from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 const PadLeft = (s, l, p) => {
   p = p.toString();
@@ -25,7 +26,7 @@ const DiskList = ({disks}) => {
   return (
     <tbody>
       {disks.map((disk) => {
-        return (<tr key={disk.id}>
+        return (<tr key={disk._id}>
           <td><Link to={'/dashboard/disk/' + disk._id}>{disk['Device Model']} <small>{disk['Serial Number']}</small></Link></td>
           <td>{disk['internal_name']}</td>
           <td>{disk['location']}</td>

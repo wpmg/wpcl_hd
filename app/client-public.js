@@ -1,8 +1,7 @@
-// import React from 'react';
 import React from 'react';
 import { render } from 'react-dom';
-import { Router, Route } from 'react-router';
-import { createHistory } from 'history';
+import { Router, Route } from 'react-router-dom';
+import createHistory from 'history/createBrowserHistory';
 
 import Login from './components/Login';
 

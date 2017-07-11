@@ -1,5 +1,5 @@
 import React from 'react';
-import 'bootstrap';
+// import 'bootstrap';
 
 export default class App extends React.Component {
   render() {

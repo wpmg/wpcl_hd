@@ -1,6 +1,6 @@
 import React from 'react';
-import { Router } from 'react-router';
-import { createHistory } from 'history';
+import { Router, Route } from 'react-router-dom';
+import createHistory from 'history/createBrowserHistory';
 import { render } from 'react-dom';
 
 import { Provider } from 'react-redux';
@@ -8,7 +8,8 @@ import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import rootReducer from './reducers/root_reducer';
 
-import routes from './routes';
+import DashboardLayout from './components/dashboard/DashboardLayout';
+// import routes from './routes';
 
 const store = createStore(
   rootReducer,
@@ -19,7 +20,7 @@ render(
   (
     <Provider store={store}>
       <Router history={createHistory()}>
-        {routes}
+        <Route path="/dashboard" component={DashboardLayout} />
       </Router>
     </Provider>
   ),

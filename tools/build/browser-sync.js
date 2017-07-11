@@ -7,16 +7,16 @@ const ROOT = '../../';
 
 const PUBLIC_FOLDER = PATH.resolve(__dirname, ROOT, 'app/public/');
 
-gulp.task('server', function() {
+gulp.task('server', () => {
   browserSync.init({
     browser: [],
     notify: false,
     online: false,
     logConnections: true,
     files: [
-      PUBLIC_FOLDER
+      PUBLIC_FOLDER,
     ],
-    proxy: 'http://localhost:6001'
+    proxy: 'http://localhost:6001',
   });
 
   browserSync.reload();

@@ -1,19 +1,26 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
-import { ActionLoadDisks } from '../../../apis/capi_disks';
+import { fetchAllDisks } from '../../../actions/diskActions';
 
 import DiskList from './DiskList';
 
 class DisksPage extends React.Component {
   componentWillMount() {
-    this.props.dispatch(ActionLoadDisks());
+    const props = this.props;
+    const { store } = this.context;
+    const state = store.getState();
+
+    if (state.disks.latestFetch < ((new Date()).getTime() - 1000 * 60 * 5)) {
+      props.dispatch(fetchAllDisks());
+    }
   }
 
   render() {
     return (
       <div>
-        <h1>Active disks</h1>
+        <h1 className="page-header">Active disks</h1>
         <div className='table-responsive'>
           <table className='table table-striped table-condensed'>
             <thead>
@@ -25,7 +32,7 @@ class DisksPage extends React.Component {
                 <th>Last seen</th>
               </tr>
             </thead>
-            <DiskList disks={this.props.disks} />
+            <DiskList disks={this.props.disks.data} />
           </table>
         </div>
       </div>
@@ -34,7 +41,11 @@ class DisksPage extends React.Component {
 }
 
 DisksPage.propTypes = {
-  disks: PropTypes.array.isRequired
+  disks: PropTypes.object.isRequired,
+};
+
+DisksPage.contextTypes = {
+  store: PropTypes.object,
 };
 
 const MapStateToProps = (state /* , ownProps */) => {

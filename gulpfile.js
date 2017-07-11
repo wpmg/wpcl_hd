@@ -1,8 +1,6 @@
-const PATH = require('path');
-
 const gulp = require('gulp');
 const requireDir = require('require-dir');
 
-requireDir('./tools/build', {recurse: false});
+requireDir('./tools/build', { recurse: false });
 
 gulp.task('default', ['build:watch:scss', 'build:watch:app', 'server']);
