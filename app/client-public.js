@@ -1,12 +1,13 @@
 // import React from 'react';
-import {Router, Route} from 'react-router';
-import {createHistory} from 'history';
-import {render} from 'react-dom';
+import React from 'react';
+import { render } from 'react-dom';
+import { Router, Route } from 'react-router';
+import { createHistory } from 'history';
 
 import Login from './components/Login';
 
 render((
-    <Router history={createHistory()}>
-        <Route path="*" component={Login}/>
-    </Router>
+  <Router history={createHistory()}>
+    <Route path="*" component={Login} />
+  </Router>
 ), document.querySelectorAll('[data-ui-role="content"]')[0]);
