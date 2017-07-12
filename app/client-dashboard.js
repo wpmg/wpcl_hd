@@ -6,10 +6,9 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-import rootReducer from './reducers/root_reducer';
+import rootReducer from './reducers/rootReducer';
 
 import DashboardLayout from './components/dashboard/DashboardLayout';
-// import routes from './routes';
 
 const store = createStore(
   rootReducer,

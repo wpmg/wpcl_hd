@@ -1,6 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import { fetchAllDisks } from '../../../actions/diskActions';
 
@@ -12,7 +12,7 @@ class DisksPage extends React.Component {
     const { store } = this.context;
     const state = store.getState();
 
-    if (state.disks.latestFetch < ((new Date()).getTime() - 1000 * 60 * 5)) {
+    if (state.disks.latestFetch < ((new Date()).getTime() - (1000 * 60 * 5))) {
       props.dispatch(fetchAllDisks());
     }
   }
@@ -21,8 +21,8 @@ class DisksPage extends React.Component {
     return (
       <div>
         <h1 className="page-header">Active disks</h1>
-        <div className='table-responsive'>
-          <table className='table table-striped table-condensed'>
+        <div className="table-responsive">
+          <table className="table table-striped table-condensed">
             <thead>
               <tr>
                 <th>Model <small>Serial No</small></th>
@@ -50,7 +50,7 @@ DisksPage.contextTypes = {
 
 const MapStateToProps = (state /* , ownProps */) => {
   return {
-    disks: state.disks
+    disks: state.disks,
   };
 };
 

@@ -19,6 +19,13 @@ const IsAuthenticated = (authority) => {
 };
 
 const Api = (router) => {
+  router.get('/auth', IsAuthenticated(3), (req, res) => {
+    res.json({
+      authority: req.user.authority,
+      username: req.user.username,
+    });
+  });
+
   router.get('/disk/:id', IsAuthenticated(3), (req, res) => {
     if (req.params.id === 'all') {
       Disk.find({}, '-attr-section', (err, result) => {

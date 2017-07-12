@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Authorization = (allowed_roles) => {
-  (Allowed_Component, Disallowed_Component) => {
-    return class With_Authorization extends React.Component {
+const Authorization = (allowedRoles) => {
+  return (AllowedComponent, DisallowedComponent) => {
+    return class WithAuthorization extends React.Component {
       constructor(props) {
         super(props);
 
@@ -11,25 +11,26 @@ const Authorization = (allowed_roles) => {
         this.state = {
           user: {
             name: 'vcarl',
-            role: 'admin'
-          }
-        }
+            role: 'admin',
+          },
+        };
       }
 
       render() {
         const { role } = this.state.user;
-        
-        if (allowed_roles.includes(role)) {
-          return <Allowed_Component {...this.props} />
+
+        if (allowedRoles.includes(role)) {
+          return <AllowedComponent {...this.props} />;
         }
 
-        if (Disallowed_Component !== 'undefined') {
-          return <Disallowed_Component {...this.props} />
+        if (DisallowedComponent !== 'undefined') {
+          return <DisallowedComponent {...this.props} />;
         }
 
+        return null;
       }
-    }
-  }
-}
+    };
+  };
+};
 
 export default Authorization;

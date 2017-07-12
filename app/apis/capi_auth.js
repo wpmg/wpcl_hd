@@ -1,6 +1,6 @@
-const GetDisk = (disk) => {
+const GetAuth = () => {
   return (
-    fetch(`/api/v1/disk/${disk}`, { credentials: 'include' })
+    fetch('/api/v1/auth', { credentials: 'include' })
       .then((response) => {
         return response.json();
       }).catch((error) => {
@@ -9,5 +9,5 @@ const GetDisk = (disk) => {
   );
 };
 
-export { GetDisk };
-export default GetDisk;
+export { GetAuth };
+export default GetAuth;

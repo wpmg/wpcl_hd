@@ -1,86 +1,81 @@
-import FS from 'fs';
-
 import express from 'express';
-/*
-import React from 'react'
-import {renderToString} from 'react-dom/server';
-import {match, RoutingContext} from 'react-router';
-*/
-import baseManager from './base-manager';
-import Api_v1 from '../apis/sapi_v1';
 
-const IsAuthenticated = function(req, res, next) {
-    // if user is authenticated in the session, call the next() to call the next request handler 
-    // Passport adds this method to request object. A middleware is allowed to add properties to
-    // request and response objects
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    // if Ihe user is not authenticated then redirect him to the login page
-    res.redirect(401, '/');
-}
+import baseManager from './base-manager';
+import apiV1 from '../apis/sapi_v1';
+
+const IsAuthenticated = (req, res, next) => {
+  // if user is authenticated in the session, call the next() to call the next request handler
+  // Passport adds this method to request object. A middleware is allowed to add properties to
+  // request and response objects
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  // if Ihe user is not authenticated then redirect him to the login page
+  res.redirect('/');
+  return false;
+};
 
 const routeManager = Object.assign({}, baseManager, {
-    configureDevelopmentEnv(app, ...args) {
-        const passport = args[0];
+  configureDevelopmentEnv(app, ...args) {
+    const passport = args[0];
 
-        const unAuthenticatedRouter = this.CreateUnAuthenticatedRouter(passport);
-        const apiRouter_v1 = this.CreateApiRouter_v1();
-        const dashboardRouter = this.CreateDashboardRouter(passport);
-        
-        app.use('/dashboard', dashboardRouter);
-        app.use('/api/v1', apiRouter_v1);            
-        app.use('/', unAuthenticatedRouter);            
-    },
+    const unAuthenticatedRouter = this.CreateUnAuthenticatedRouter(passport);
+    const apiRouterV1 = this.CreateApiRouter_v1();
+    const dashboardRouter = this.CreateDashboardRouter(passport);
 
-    CreateUnAuthenticatedRouter(passport) {
-        const router = express.Router();
+    app.use('/dashboard', dashboardRouter);
+    app.use('/api/v1', apiRouterV1);
+    app.use('/', unAuthenticatedRouter);
+  },
 
-        router.post('/login', passport.authenticate(
-            'login', 
-            {
-                successRedirect: '/dashboard',
-                failureRedirect: '/' 
-            }
-        ));
+  CreateUnAuthenticatedRouter(passport) {
+    const router = express.Router();
 
-        router.get('/logout', (req, res) => {
-            req.logout();
-            res.redirect('/');
-        });
+    router.post('/login', passport.authenticate(
+      'login',
+      {
+        successRedirect: '/dashboard',
+        failureRedirect: '/',
+      }
+    ));
 
-        router.get('*', 
-            (req, res, next) => {
-                if (req.isAuthenticated()) {
-                    res.redirect(300, '/dashboard');
-                } else {
-                    return next();
-                }
+    router.get('/logout', (req, res) => {
+      req.logout();
+      res.redirect('/');
+    });
 
-            }, 
-            (req, res) => {
-                res.render('login_index', {layout: 'login.hbs'});
-            }
-        );
+    router.get('*',
+      (req, res, next) => {
+        if (req.isAuthenticated()) {
+          res.redirect(300, '/dashboard');
+          return false;
+        }
 
-        return router;
-    },
+        return next();
+      },
+      (req, res) => {
+        res.render('login_index', { layout: 'login.hbs' });
+      }
+    );
 
-    CreateDashboardRouter() {
-        const router = express.Router();
+    return router;
+  },
 
-        router.get('/', IsAuthenticated, (req, res) => {
-            res.render('index');
-        });
+  CreateDashboardRouter() {
+    const router = express.Router();
 
-        return router;
-    },
+    router.get('/', IsAuthenticated, (req, res) => {
+      res.render('index');
+    });
 
-    CreateApiRouter_v1(app) {
-        const router = express.Router();
+    return router;
+  },
 
-        return Api_v1(router);
-    }
+  CreateApiRouter_v1() {
+    const router = express.Router();
+
+    return apiV1(router);
+  },
 });
 
 export default routeManager;

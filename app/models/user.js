@@ -1,14 +1,14 @@
 import mongoose from 'mongoose';
 
-const user_model = mongoose.model(
+const UserModel = mongoose.model(
   'User',
   {
     id: String,
     username: String,
     password: String,
-    authority: Number
+    authority: Number,
   },
   'users'
 );
 
-export default user_model;
+export default UserModel;
