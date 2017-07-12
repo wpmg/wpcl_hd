@@ -54,10 +54,6 @@ const MenuUl = ({ auth, location, type, menuGroup }) => {
     }, 0));
   }
 
-  if (type === 'collapsable') {
-    console.log(menuItems);
-  }
-
   if (menuItems.length > 0) {
     return (
       <ul className={htmlClass}>

@@ -48,6 +48,10 @@ const webpackConfig = {
       debug: true,
     }),
     new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.ProvidePlugin({
+      jQuery: 'jquery',
+      $: 'jquery',
+    }),
   ],
 };
 

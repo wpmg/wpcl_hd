@@ -1,4 +1,6 @@
 import React from 'react';
+import 'jquery';
+import 'bootstrap/js/collapse';
 
 import DashboardRoutes from './DashboardRoutes';
 import SignedInAs from './SignedInAs';

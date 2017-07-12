@@ -3,32 +3,40 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 const MenuLi = ({ menuItem, auth, location, depth }) => {
-  if (menuItem.auth < auth.authority) {
+  const linkList = [];
+  const itemAuth = typeof menuItem.auth === 'undefined' ? 100 : menuItem.auth;
+  const itemUseA = menuItem.useA || false;
+  const current = ['', null];
+  let hide = menuItem.hide === true;
+
+  if (itemAuth < auth.authority) {
     return null;
   }
 
-  let show = menuItem.show === true;
-  const current = ['', ''];
-  console.log(menuItem.path === location.pathname, menuItem.path, location.pathname);
-
   if (menuItem.path === location.pathname) {
-    show = true;
-    current[0] = 'active';
+    hide = false;
+    current[0] = 'active ';
     current[1] = <span className="sr-only">(current)</span>;
   }
 
-  if (show === false) {
+  if (hide === true) {
     return null;
   }
   const depthDashes = `${'\u2013'.repeat(depth)} `;
-  const useA = menuItem.useA || false;
-  const link = useA
-    ? <a href={menuItem.path}>{depthDashes + menuItem.name}</a>
-    : <Link to={menuItem.path}>{depthDashes + menuItem.name}</Link>;
+  const link = (name, className) => {
+    return itemUseA
+      ? <a className={className} href={menuItem.path}>{depthDashes + name}</a>
+      : <Link className={className} to={menuItem.path}>{depthDashes + name}</Link>;
+  };
 
-  return (
-    <li key={menuItem.path} className={current[0]}>{link} {current[1]}</li>
-  );
+  if (typeof menuItem.nameXs === 'undefined') {
+    linkList.push(link(menuItem.name, ''));
+  } else {
+    linkList.push(link(menuItem.nameXs, 'visible-xs'));
+    linkList.push(link(menuItem.name, 'hidden-xs'));
+  }
+
+  return <li key={menuItem.path} className={current[0]}>{linkList} {current[1]}</li>;
 };
 
 MenuLi.propTypes = {

@@ -3,32 +3,36 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import MenuUl from './MenuUl';
-
-const menuGroups = (isNavbarMenu) => {
-  if (isNavbarMenu) {
-    return [[
-      { name: 'Settings', path: '/dashboard/settings', auth: 3, show: true },
-      { name: 'Log out', path: '/logout', auth: 3, show: true, useA: true },
-    ]];
-  }
-
-  return [
-    [
-      { name: 'Overview', path: '/dashboard', auth: 3, show: true, children: [
-        { name: 'Disk #', path: '/dashboard/disk', auth: 3, show: false },
-      ] },
-      { name: 'Attributes', path: '/dashboard/attributes', auth: 3, show: true },
-    ],
-    [
-      { name: 'Edit locations', path: '/dashboard/admin/locations', auth: 2, show: true },
-    ],
-    [
-      { name: 'Edit users', path: '/dashboard/admin/users', auth: 1, show: true },
-    ],
-  ];
-};
+import { authToDegree } from './SignedInAs';
 
 const Menu = ({ auth, location, type }) => {
+  const menuGroups = (isNavbarMenu) => {
+    if (isNavbarMenu) {
+      return [[
+        { name: 'Settings', path: '/dashboard/settings' },
+        { name: 'Log out',
+          nameXs: `Log out \u2013 signed in as ${auth.username} (${authToDegree(auth.authority)})`,
+          path: '/logout',
+          useA: true },
+      ]];
+    }
+
+    return [
+      [
+        { name: 'Overview', path: '/dashboard', children: [
+          { name: 'Disk #', path: '/dashboard/disk', hide: false },
+        ] },
+        { name: 'Attributes', path: '/dashboard/attributes' },
+      ],
+      [
+        { name: 'Edit locations', path: '/dashboard/admin/locations', auth: 2 },
+      ],
+      [
+        { name: 'Edit users', path: '/dashboard/admin/users', auth: 1 },
+      ],
+    ];
+  };
+
   if (auth.authority === 0) {
     return null;
   }

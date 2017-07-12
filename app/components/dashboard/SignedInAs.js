@@ -4,29 +4,32 @@ import { connect } from 'react-redux';
 
 import { fetchAuth } from '../../actions/authActions';
 
+const authToDegree = (auth) => {
+  switch (auth) {
+    case 1:
+      return 'professor';
+    case 2:
+      return 'master';
+    case 3:
+      return 'bachelor';
+    default:
+      return '';
+  }
+};
+
 class SignedInAs extends React.Component {
   constructor(props) {
     super(props);
-
-    props.dispatch(fetchAuth());
-  }
-
-  authToDegree() {
-    switch (this.props.auth.authority) {
-      case 1:
-        return 'professor';
-      case 2:
-        return 'master';
-      case 3:
-        return 'bachelor';
-      default:
-        return '';
+    if (props.auth.authority === 0) {
+      props.dispatch(fetchAuth());
     }
   }
 
   render() {
+    const auth = this.props.auth;
+
     return (
-      <p className="navbar-text">Signed in as {this.props.auth.username} ({this.authToDegree()})</p>
+      <p className="navbar-text hidden-xs">Signed in as {auth.username} ({authToDegree(auth.authority)})</p>
     );
   }
 }
@@ -46,3 +49,4 @@ const MapStateToProps = (state /* , ownProps */) => {
 };
 
 export default connect(MapStateToProps)(SignedInAs);
+export { authToDegree };
