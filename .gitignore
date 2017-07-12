@@ -4,5 +4,5 @@ node_modules/
 app/public/
 app/config/
 
-.idea/
+# .idea/
 *.log
