@@ -64,7 +64,7 @@ const routeManager = Object.assign({}, baseManager, {
   CreateDashboardRouter() {
     const router = express.Router();
 
-    router.get('/', IsAuthenticated, (req, res) => {
+    router.get('*', IsAuthenticated, (req, res) => {
       res.render('index');
     });
 

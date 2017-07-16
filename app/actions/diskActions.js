@@ -1,4 +1,4 @@
-import { getDisk } from '../apis/capi_disks';
+import { getDisk, getDiskAttributes } from '../apis/capi_disks';
 
 const DISK_ACTIONS = {
   ALL_DISKS_FETCHED: 'ALL_DISKS_FETCHED',
@@ -39,7 +39,7 @@ const fetchAllDisks = () => {
 const fetchLatestAttributes = (diskId) => {
   return (dispatch) => {
     return (
-      getDisk(diskId, 'latest')
+      getDiskAttributes(diskId, 'latest')
         .then((attributes) => {
           dispatch(actionAttributesLatestFetched(diskId, attributes));
         }).catch((error) => {

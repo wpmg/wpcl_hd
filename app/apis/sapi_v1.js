@@ -54,7 +54,6 @@ const Api = (router) => {
         },
       ])
       .exec((err, result) => {
-        console.log(err, result);
         res.json(result);
       });
     }
@@ -63,7 +62,7 @@ const Api = (router) => {
   router.get('/disk/:id', IsAuthenticated(3), (req, res) => {
     if (req.params.id === 'all') {
       const result = {};
-      Disk.find({}, '-attr-section').cursor()
+      Disk.find({}, '-attr_section').cursor()
         .on('data', (disk) => {
           result[disk._id] = disk;
         })

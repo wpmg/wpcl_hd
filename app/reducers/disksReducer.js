@@ -8,13 +8,17 @@ const disksReducer = (state = initialState.disks, action) => {
     case DISK_ACTIONS.ALL_DISKS_FETCHED:
       return action.disks;
 
-    case DISK_ACTIONS.DISK_LATEST_ATTRIBUTES_FETCHED:
-      return merge({}, state, {
+    case DISK_ACTIONS.DISK_LATEST_ATTRIBUTES_FETCHED: {
+      const a = merge({}, state, {
         data: {
-          [action.diskId]: action.attributes,
+          [action.diskId]: {
+            attr_section: action.attributes,
+          },
         },
       });
-
+      console.log(a);
+      return a;
+    }
     default:
       return state;
   }
