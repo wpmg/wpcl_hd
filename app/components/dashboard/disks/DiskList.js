@@ -25,17 +25,17 @@ const DiskTimeFormat = (ms) => {
 const DiskList = ({ disks }) => {
   return (
     <tbody>
-      {disks.map((disk) => {
-        return (<tr key={disk._id}>
+      {Object.keys(disks).map((id) => {
+        return (<tr key={id}>
           <td>
-            <Link to={`/dashboard/disk/${disk._id}`}>
-              {disk['Device Model']} <small>{disk['Serial Number']}</small>
+            <Link to={`/dashboard/disk/${id}`}>
+              {disks[id]['Device Model']} <small>{disks[id]['Serial Number']}</small>
             </Link>
           </td>
-          <td>{disk.internal_name}</td>
-          <td>{disk.location}</td>
-          <td>{DiskTimeFormat(disk.added)}</td>
-          <td>{DiskTimeFormat(disk.updated)}</td>
+          <td>{disks[id].internal_name}</td>
+          <td>{disks[id].location}</td>
+          <td>{DiskTimeFormat(disks[id].added)}</td>
+          <td>{DiskTimeFormat(disks[id].updated)}</td>
         </tr>);
       })}
     </tbody>
@@ -43,7 +43,7 @@ const DiskList = ({ disks }) => {
 };
 
 DiskList.propTypes = {
-  disks: PropTypes.array.isRequired,
+  disks: PropTypes.object.isRequired,
 };
 
 export default DiskList;

@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 import Disk from '../models/disk';
 
 const IsAuthenticated = (authority) => {
@@ -26,11 +28,48 @@ const Api = (router) => {
     });
   });
 
-  router.get('/disk/:id', IsAuthenticated(3), (req, res) => {
-    if (req.params.id === 'all') {
-      Disk.find({}, '-attr-section', (err, result) => {
+  router.get('/disk/:id/attributes/:attrId', IsAuthenticated(3), (req, res) => {
+    if (req.params.attrId === 'latest') {
+      Disk.aggregate([
+        { $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
+        { $addFields: { 'attr_section.updtime': '$updated' } },
+        { $project: { _id: 0, attr_section: 1 } },
+        { $unwind: '$attr_section' },
+        { $replaceRoot: { newRoot: '$attr_section' } },
+        {
+          $project: {
+            attr_id: 1,
+            name: 1,
+            thresh: 1,
+            attr_type: 1,
+            updated: 1,
+            failed: 1,
+            values: {
+              $filter: {
+                input: '$values',
+                as: 'value',
+                cond: { $eq: ['$$value.time', '$$ROOT.updtime'] } },
+            },
+          },
+        },
+      ])
+      .exec((err, result) => {
+        console.log(err, result);
         res.json(result);
       });
+    }
+  });
+
+  router.get('/disk/:id', IsAuthenticated(3), (req, res) => {
+    if (req.params.id === 'all') {
+      const result = {};
+      Disk.find({}, '-attr-section').cursor()
+        .on('data', (disk) => {
+          result[disk._id] = disk;
+        })
+        .on('close', () => {
+          res.json(result);
+        });
     }
   });
 

@@ -72,7 +72,7 @@ const routeManager = Object.assign({}, baseManager, {
   },
 
   CreateApiRouter_v1() {
-    const router = express.Router();
+    const router = express.Router({ strict: true });
 
     return apiV1(router);
   },

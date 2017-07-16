@@ -3,7 +3,7 @@ import nconf from 'nconf';
 import passport from 'passport';
 import mongoose from 'mongoose';
 
-import configDb from './sensitive/db';
+import configDb from './config/db';
 import configManager from './infra/config-manager';
 import passportManager from './infra/passport-manager';
 import middlewareManager from './infra/middleware-manager';

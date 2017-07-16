@@ -25,8 +25,8 @@ const MenuLi = ({ menuItem, auth, location, depth }) => {
   const depthDashes = `${'\u2013'.repeat(depth)} `;
   const link = (name, className) => {
     return itemUseA
-      ? <a className={className} href={menuItem.path}>{depthDashes + name}</a>
-      : <Link className={className} to={menuItem.path}>{depthDashes + name}</Link>;
+      ? <a key={className} className={className} href={menuItem.path}>{depthDashes + name}</a>
+      : <Link key={className} className={className} to={menuItem.path}>{depthDashes + name}</Link>;
   };
 
   if (typeof menuItem.nameXs === 'undefined') {

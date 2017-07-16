@@ -18,6 +18,10 @@ class DisksPage extends React.Component {
   }
 
   render() {
+    if (this.props.disks.latestFetch === 0) {
+      return null;
+    }
+
     return (
       <div>
         <h1 className="page-header">Active disks</h1>

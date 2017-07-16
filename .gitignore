@@ -1,8 +1,8 @@
-sensitivity.js
-app/sensitive/
+# General
 node_modules/
+.idea/
+*.log
+
+# App specific
 app/public/
 app/config/
-
-# .idea/
-*.log

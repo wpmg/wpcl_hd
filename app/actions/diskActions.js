@@ -1,7 +1,8 @@
-import { GetDisk } from '../apis/capi_disks';
+import { getDisk } from '../apis/capi_disks';
 
 const DISK_ACTIONS = {
   ALL_DISKS_FETCHED: 'ALL_DISKS_FETCHED',
+  DISK_LATEST_ATTRIBUTES_FETCHED: 'DISK_LATEST_ATTRIBUTES_FETCHED',
 };
 
 const actionDisksFetched = (disks) => {
@@ -14,10 +15,18 @@ const actionDisksFetched = (disks) => {
   };
 };
 
+const actionAttributesLatestFetched = (diskId, attributes) => {
+  return {
+    type: DISK_ACTIONS.DISK_LATEST_ATTRIBUTES_FETCHED,
+    diskId,
+    attributes,
+  };
+};
+
 const fetchAllDisks = () => {
   return (dispatch) => {
     return (
-      GetDisk('all')
+      getDisk('all')
         .then((disks) => {
           dispatch(actionDisksFetched(disks));
         }).catch((error) => {
@@ -27,4 +36,22 @@ const fetchAllDisks = () => {
   };
 };
 
-export { DISK_ACTIONS, actionDisksFetched, fetchAllDisks };
+const fetchLatestAttributes = (diskId) => {
+  return (dispatch) => {
+    return (
+      getDisk(diskId, 'latest')
+        .then((attributes) => {
+          dispatch(actionAttributesLatestFetched(diskId, attributes));
+        }).catch((error) => {
+          throw (error);
+        })
+    );
+  };
+};
+
+export {
+  DISK_ACTIONS,
+  actionDisksFetched,
+  fetchAllDisks,
+  fetchLatestAttributes,
+};
