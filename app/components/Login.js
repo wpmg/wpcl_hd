@@ -1,11 +1,47 @@
 /* eslint jsx-a11y/no-autofocus: 0 */
 
 import React from 'react';
+import PropTypes from 'prop-types';
+import { parse as urlParse } from 'url';
+
+const LoginWarning = ({ reason }) => {
+  let text;
+
+  switch (reason) {
+    case 'logout':
+      text = 'You were successfully logged out.';
+      break;
+
+    case 'auth':
+      text = 'You were logged out due to inactivity.';
+      break;
+
+    default:
+      return null;
+  }
+
+  if (typeof text === 'undefined') {
+    return null;
+  }
+
+  return <div className="alert alert-warning" role="alert">{text}</div>;
+};
+
+LoginWarning.propTypes = {
+  reason: PropTypes.string,
+};
+
+LoginWarning.defaultProps = {
+  reason: '',
+};
 
 export default () => {
+  const parsedUrl = urlParse(window.location.href, true).query.r;
+
   return (
     <form className="form-signin" method="post" action="/login">
-      <h2 className="form-signin-heading">Sign in</h2>
+      <LoginWarning reason={parsedUrl} />
+      <h1 className="form-signin-heading">Sign in</h1>
       <div className="form-group">
         <label htmlFor="username" className="sr-only">E-mail address</label>
         <input

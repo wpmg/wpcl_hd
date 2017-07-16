@@ -11,7 +11,7 @@ const IsAuthenticated = (req, res, next) => {
     return next();
   }
   // if Ihe user is not authenticated then redirect him to the login page
-  res.redirect('/');
+  res.redirect('/?r=auth');
   return false;
 };
 
@@ -41,7 +41,7 @@ const routeManager = Object.assign({}, baseManager, {
 
     router.get('/logout', (req, res) => {
       req.logout();
-      res.redirect('/');
+      res.redirect('/?r=logout');
     });
 
     router.get('*',
