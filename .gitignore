@@ -4,5 +4,5 @@ node_modules/
 *.log
 
 # App specific
-app/public/
-app/config/
+backend/config/
+public/

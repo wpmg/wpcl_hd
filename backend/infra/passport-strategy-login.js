@@ -27,12 +27,12 @@ const LoginStrategy = (passport) => {
 
             // Username does not exist, log the error and redirect back
             if (!user) {
-              console.log(`'User not found with username ${username}`);
+              console.log(`'User not found with username ${username}.`);
               return done(null, false);
             }
             // User exists but wrong password, log the error
             if (!IsValidPassword(user, password)) {
-              console.log('Invalid Password');
+              console.log(`Invalid Password for user ${username}.`);
               return done(null, false);
             }
 

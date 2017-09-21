@@ -1,15 +1,9 @@
-const PATH = require('path');
-
 const gulp = require('gulp');
 const gutil = require('gulp-util');
 
 const webpack = require('webpack');
 
-const ROOT = '../../';
-
-const WEBPACK_CONFIG = PATH.resolve(__dirname, ROOT, 'tools/build/config/webpack-config.js');
-
-const compiler = webpack(require(WEBPACK_CONFIG));
+const compiler = webpack(require('./config/webpack-config'));
 
 const printReport = (stats) => {
   gutil.log('[webpack]', stats.toString({

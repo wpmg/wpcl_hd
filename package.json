@@ -21,8 +21,8 @@
   "homepage": "https://github.com/wpmg/wpcl_hd#readme",
   "scripts": {
     "gulp": "gulp",
-    "debug": "node-dev --debug app/babel-server.js",
-    "server": "node-dev app/babel-server.js",
+    "debug": "node-dev --debug backend/babel-server.js",
+    "server": "node-dev backend/babel-server.js",
     "start": "npm-run-all --parallel gulp server",
     "start:debug": "npm-run-all --parallel gulp debug"
   },

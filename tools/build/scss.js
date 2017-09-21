@@ -10,10 +10,10 @@ const sourcemap = require('gulp-sourcemaps');
 
 const ROOT = '../../';
 
-const SCSS_SRC_FOLDER = PATH.resolve(__dirname, ROOT, 'app/scss/');
+const SCSS_SRC_FOLDER = PATH.resolve(__dirname, ROOT, 'frontend/scss/');
 const SCSS_SRC_FILES = PATH.resolve(__dirname, ROOT, SCSS_SRC_FOLDER, '**/*.scss');
 const SCSS_SRC_FILE = PATH.resolve(__dirname, ROOT, SCSS_SRC_FOLDER, 'style.scss');
-const SCSS_BUILD_FOLDER = PATH.resolve(__dirname, ROOT, 'app/public/css/');
+const SCSS_BUILD_FOLDER = PATH.resolve(__dirname, ROOT, 'public/css/');
 
 gulp.task('build:scss', () => {
   return gulp.src(SCSS_SRC_FILE)

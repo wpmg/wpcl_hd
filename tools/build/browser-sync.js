@@ -5,7 +5,7 @@ const browserSync = require('browser-sync');
 
 const ROOT = '../../';
 
-const PUBLIC_FOLDER = PATH.resolve(__dirname, ROOT, 'app/public/');
+const PUBLIC_FOLDER = PATH.resolve(__dirname, ROOT, 'public/');
 
 gulp.task('server', () => {
   browserSync.init({

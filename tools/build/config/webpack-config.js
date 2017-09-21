@@ -4,15 +4,15 @@ const webpack = require('webpack');
 
 const ROOT = '../../../';
 
-const APP_FOLDER = PATH.resolve(__dirname, ROOT, 'app/');
+const FRONTEND_FOLDER = PATH.resolve(__dirname, ROOT, 'frontend/');
 
-const PUBLIC_ENTRY_FILE = PATH.resolve(__dirname, ROOT, APP_FOLDER, 'client-public.js');
-const DASHBOARD_ENTRY_FILE = PATH.resolve(__dirname, ROOT, APP_FOLDER, 'client-dashboard.js');
+const PUBLIC_ENTRY_FILE = PATH.resolve(__dirname, ROOT, FRONTEND_FOLDER, 'client-public.js');
+const DASHBOARD_ENTRY_FILE = PATH.resolve(__dirname, ROOT, FRONTEND_FOLDER, 'client-dashboard.js');
 
 
 const BUILD_FILE = '[name].js';
 
-const BUILD_FOLDER = PATH.resolve(__dirname, ROOT, 'app/public/js/');
+const BUILD_FOLDER = PATH.resolve(__dirname, ROOT, 'public/js/');
 const PUBLIC_PATH = '/js/';
 
 const webpackConfig = {
@@ -32,7 +32,7 @@ const webpackConfig = {
       {
         test: /\.js$/,
         include: [
-          APP_FOLDER,
+          FRONTEND_FOLDER,
         ],
         loader: 'babel-loader',
         query: {
