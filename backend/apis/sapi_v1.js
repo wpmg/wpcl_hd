@@ -28,7 +28,7 @@ const Api = (router) => {
     });
   });
 
-  router.get('/disk/:id/attributes/:attrId', IsAuthenticated(3), (req, res) => {
+  router.get('/disk/:id/attribute/:attrId', IsAuthenticated(3), (req, res) => {
     if (req.params.attrId === 'latest') {
       Disk.aggregate([
         { $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
@@ -67,6 +67,11 @@ const Api = (router) => {
           result[disk._id] = disk;
         })
         .on('close', () => {
+          res.json(result);
+        });
+    } else {
+      Disk.findOne({ _id: req.params.id }, '-attr_section')
+        .exec((err, result) => {
           res.json(result);
         });
     }

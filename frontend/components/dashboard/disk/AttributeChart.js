@@ -92,7 +92,8 @@ const AttributeChartRenderer = (divObj, jsonFile) => {
     data = jsonData;
 
     // Format data correctly
-    data.forEach((d) => {
+    data.forEach((dt) => {
+      const d = dt;
       d.xtime = new Date(d.xtime * 1000);
       d.yvalue = +d.yvalue;
     });
