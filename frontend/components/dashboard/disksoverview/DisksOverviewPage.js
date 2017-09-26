@@ -35,26 +35,24 @@ class DisksOverviewPage extends React.Component {
       content = (<p>Couldn&apos;t fetch disks.</p>);
     } else {
       content = (
-        <div className="table-responsive">
-          <table className="table table-striped table-condensed">
-            <thead>
-              <tr>
-                <th>Model <small>Serial No</small></th>
-                <th>Internal</th>
-                <th>Location</th>
-                <th>Added</th>
-                <th>Last seen</th>
-              </tr>
-            </thead>
-            <DisksList disks={this.state.disks} />
-          </table>
-        </div>
+        <table className="table table-hover table-sm table-responsive">
+          <thead className="thead-inverse">
+            <tr>
+              <th>Model <small>Serial No</small></th>
+              <th>Internal</th>
+              <th>Location</th>
+              <th>Added</th>
+              <th>Last seen</th>
+            </tr>
+          </thead>
+          <DisksList disks={this.state.disks} />
+        </table>
       );
     }
 
     return (
       <div>
-        <h1 className="page-header">Active disks</h1>
+        <h1 className="h1">Active disks</h1>
         {content}
       </div>
     );

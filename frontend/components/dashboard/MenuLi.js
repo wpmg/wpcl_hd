@@ -24,19 +24,20 @@ const MenuLi = ({ menuItem, auth, location, depth }) => {
   }
   const depthDashes = `${'\u2013'.repeat(depth)} `;
   const link = (name, className) => {
+    const navClassName = `nav-link ${className}`;
     return itemUseA
-      ? <a key={className} className={className} href={menuItem.path}>{depthDashes + name}</a>
-      : <Link key={className} className={className} to={menuItem.path}>{depthDashes + name}</Link>;
+      ? <a key={className} className={navClassName} href={menuItem.path}>{depthDashes + name}</a>
+      : <Link key={className} className={navClassName} to={menuItem.path}>{depthDashes + name}</Link>;
   };
 
   if (typeof menuItem.nameXs === 'undefined') {
     linkList.push(link(menuItem.name, ''));
   } else {
-    linkList.push(link(menuItem.nameXs, 'visible-xs'));
-    linkList.push(link(menuItem.name, 'hidden-xs'));
+    linkList.push(link(menuItem.nameXs, 'd-md-none'));
+    linkList.push(link(menuItem.name, 'd-none d-md-block'));
   }
 
-  return <li key={menuItem.path} className={current[0]}>{linkList} {current[1]}</li>;
+  return <li key={menuItem.path} className={`nav-item ${current[0]}`}>{linkList} {current[1]}</li>;
 };
 
 MenuLi.propTypes = {

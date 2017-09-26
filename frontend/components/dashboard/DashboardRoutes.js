@@ -7,10 +7,10 @@ import AttributesPage from './attributes/AttributesPage';
 
 export default () => {
   return (
-    <div className="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <main className="col-md-9 col-xl-10 ml-auto main">
       <Route path="/dashboard" exact component={DisksOverviewPage} />
       <Route path="/dashboard/disk/:diskId" exact component={DiskInfoPage} />
       <Route path="/dashboard/attributes" exact component={AttributesPage} />
-    </div>
+    </main>
   );
 };

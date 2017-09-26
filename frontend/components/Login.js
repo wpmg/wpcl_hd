@@ -24,7 +24,11 @@ const LoginWarning = ({ reason }) => {
     return null;
   }
 
-  return <div className="alert alert-warning" role="alert">{text}</div>;
+  return (
+    <div className="alert alert-warning" role="alert">
+      {text}
+    </div>
+  );
 };
 
 LoginWarning.propTypes = {
@@ -41,7 +45,7 @@ export default () => {
   return (
     <form className="form-signin" method="post" action="/login">
       <LoginWarning reason={parsedUrl} />
-      <h1 className="form-signin-heading">Sign in</h1>
+      <h1 className="h1 page-header">Sign in</h1>
       <div className="form-group">
         <label htmlFor="username" className="sr-only">E-mail address</label>
         <input

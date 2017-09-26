@@ -34,13 +34,13 @@ const MenuUl = ({ auth, location, type, menuGroup }) => {
 
   switch (type) {
     case 'navbar':
-      htmlClass = 'nav navbar-nav navbar-right';
+      htmlClass = 'navbar-nav ml-auto';
       break;
     case 'collapsable':
-      htmlClass = 'nav navbar-nav visible-xs';
+      htmlClass = 'navbar-nav d-md-none';
       break;
     default:
-      htmlClass = 'nav nav-sidebar';
+      htmlClass = 'nav-sidebar';
   }
 
   const menuItems = [];

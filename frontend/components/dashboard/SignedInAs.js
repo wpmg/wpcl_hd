@@ -29,7 +29,9 @@ class SignedInAs extends React.Component {
     const auth = this.props.auth;
 
     return (
-      <p className="navbar-text hidden-xs">Signed in as {auth.username} ({authToDegree(auth.authority)})</p>
+      <small className="navbar-text d-none d-md-inline">
+        Signed in as {auth.username} ({authToDegree(auth.authority)})
+      </small>
     );
   }
 }

@@ -51,6 +51,8 @@ const webpackConfig = {
     new webpack.ProvidePlugin({
       jQuery: 'jquery',
       $: 'jquery',
+      'window.jQuery': 'jquery',
+      Popper: ['popper.js', 'default'],
     }),
   ],
 };

@@ -37,9 +37,15 @@ const Menu = ({ auth, location, type }) => {
     return null;
   }
 
+  if (type === 'navbar') {
+    return (
+      <MenuUl menuGroup={menuGroups(true)[0]} auth={auth} location={location} type={type} />
+    );
+  }
+
   return (
     <div>
-      {menuGroups(type === 'navbar').map((menuGroup, i) => {
+      {menuGroups(false).map((menuGroup, i) => {
         return <MenuUl key={i.toString()} menuGroup={menuGroup} auth={auth} location={location} type={type} />;
       })}
     </div>
