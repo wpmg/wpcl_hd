@@ -5,4 +5,8 @@ body.login {
 div.container.login {
   max-width: 500px;
   margin-top: 1rem;
+
+  h1 {
+    border: 0;
+  }
 }
