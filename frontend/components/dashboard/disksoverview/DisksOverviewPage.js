@@ -52,7 +52,7 @@ class DisksOverviewPage extends React.Component {
 
     return (
       <div>
-        <h1 className="h1">Active disks</h1>
+        <h1 className="h1 page-h">Active disks</h1>
         {content}
       </div>
     );

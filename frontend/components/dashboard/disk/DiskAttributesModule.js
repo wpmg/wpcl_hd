@@ -80,14 +80,14 @@ class DiskAttributesModule extends React.Component {
     if (props.fetchedStatus === 'not-fetched') {
       return (
         <div>
-          <h2 className="h2">Attributes section</h2>
+          <h2 className="h2 page-h">Attributes section</h2>
           <p>Fetching attributes.</p>
         </div>
       );
     } else if (props.fetchedStatus === 'couldnt-fetch') {
       return (
         <div>
-          <h2 className="h2">Attributes section</h2>
+          <h2 className="h2 page-h">Attributes section</h2>
           <p>Couldn&apos;t fetch attributes.</p>
         </div>
       );
@@ -95,7 +95,7 @@ class DiskAttributesModule extends React.Component {
 
     return (
       <div>
-        <h2 className="h2">Attributes section</h2>
+        <h2 className="h2 page-h">Attributes section</h2>
         <AttributeModal diskId={props.diskId} attribute={this.state.modalAttribute} />
         <table className="table table-hover table-sm table-responsive">
           <thead className="thead-inverse">

@@ -22,14 +22,14 @@ const DiskInfoModule = ({ fetchedStatus, disk }) => {
   if (fetchedStatus === 'not-fetched') {
     return (
       <div>
-        <h2 className="sub-header">Information section</h2>
+        <h2 className="h2 page-h">Information section</h2>
         <p>Fetching information section.</p>
       </div>
     );
   } else if (fetchedStatus === 'couldnt-fetch') {
     return (
       <div>
-        <h2 className="h2">Information section</h2>
+        <h2 className="h2 page-h">Information section</h2>
         <p>Couldn&apos;t fetch information section.</p>
       </div>
     );
@@ -37,7 +37,7 @@ const DiskInfoModule = ({ fetchedStatus, disk }) => {
 
   return (
     <div>
-      <h2 className="h2">Information section</h2>
+      <h2 className="h2 page-h">Information section</h2>
       <table className="table table-hover table-sm table-responsive">
         <thead className="thead-inverse"><tr><th>Attribute</th><th>Value</th></tr></thead>
         <InfoModuleTableBody informationData={disk.info_section} />

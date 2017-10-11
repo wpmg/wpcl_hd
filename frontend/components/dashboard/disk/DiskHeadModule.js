@@ -7,14 +7,14 @@ const DiskHeadModule = ({ diskId, fetchedStatus, disk }) => {
   if (fetchedStatus === 'not-fetched') {
     return (
       <div>
-        <h1 className="page-header">Disk ID: {diskId}</h1>
+        <h1 className="h1 page-h">Disk ID: {diskId}</h1>
         <p>Fetching disk.</p>
       </div>
     );
   } else if (fetchedStatus === 'couldnt-fetch') {
     return (
       <div>
-        <h1 className="page-header">Disk ID: {diskId}</h1>
+        <h1 className="h1 page-h">Disk ID: {diskId}</h1>
         <p>Couldn&apos;t fetch disk.</p>
       </div>
     );
@@ -22,7 +22,7 @@ const DiskHeadModule = ({ diskId, fetchedStatus, disk }) => {
 
   return (
     <div>
-      <h1 className="h1">{disk['Device Model']} <small>{disk['Serial Number']}</small></h1>
+      <h1 className="h1 page-h">{disk['Device Model']} <small>{disk['Serial Number']}</small></h1>
       <table className="table table-hover table-sm table-responsive">
         <thead className="thead-inverse"><tr><th>Variable</th><th>Data</th></tr></thead>
         <tbody>
