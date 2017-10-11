@@ -1,278 +1,288 @@
-import d3 from 'd3';
+import React from 'react';
+import PropTypes from 'prop-types';
 
-/**
-* Created by wpmg on 2017-01-23.
-* Converted to node on 2017-07-16.
-*/
+import { timeFormat as d3TimeFormat } from 'd3-time-format';
+import {
+  timeSecond as d3TimeSe,
+  timeMinute as d3TimeMi,
+  timeHour as d3TimeHo,
+  timeDay as d3TimeDa,
+  timeMonth as d3TimeMo,
+  timeWeek as d3TimeWe,
+  timeYear as d3TimeYe,
+} from 'd3-time';
+import { scaleTime as d3ScaleTime, scaleLinear as d3ScaleLinear } from 'd3-scale';
+import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from 'd3-axis';
+import { area as d3Area, curveStepAfter as d3CurveStepAfter } from 'd3-shape';
+import { brushX as d3BrushX } from 'd3-brush';
+import { zoom as d3Zoom, zoomIdentity as d3ZoomIdentity } from 'd3-zoom';
+import { select as d3Select, event as d3Event } from 'd3-selection';
+import { extent as d3Extent, max as d3Max } from 'd3-array';
 
-const AttributeChartRenderer = (divObj, jsonFile) => {
-  let data;
-  const svg = d3.select(divObj).append('svg');
-  let area;
-  let area2;
-  let brush;
-  let zoom;
-  let focus;
-  let context;
-  let clipPath;
-  let xExtent;
-  let yExtent;
-  let firstLoad = true;
-  let currentBrush;
+const timeFormats = {
+  ms: d3TimeFormat('.%L'),
+  s: d3TimeFormat(':%S'),
+  m: d3TimeFormat('%H:%M'),
+  h: d3TimeFormat('%H:%M'),
+  da: d3TimeFormat('%a %-d/%-m'),
+  we: d3TimeFormat('%a %-d/%-m'),
+  mo: d3TimeFormat('%B'),
+  ye: d3TimeFormat('%Y'),
+};
 
-  let width;
-  const height = 170;
-  const height2 = 40;
-  const margin = { top: 20, right: 20, bottom: 110, left: 40 };
-  const margin2 = { top: 230, right: 20, bottom: 30, left: 40 };
+const selectTimeFormat = (date) => {
+  if (d3TimeSe(date) < date) {
+    return timeFormats.ms(date);
+  } else if (d3TimeMi(date) < date) {
+    return timeFormats.s(date);
+  } else if (d3TimeHo(date) < date) {
+    return timeFormats.m(date);
+  } else if (d3TimeDa(date)) {
+    return timeFormats.h(date);
+  } else if (d3TimeMo(date)) {
+    return (d3TimeWe(date) < date ? timeFormats.da : timeFormats.we)(date);
+  } else if (d3TimeYe(date) < date) {
+    return timeFormats.mo(date);
+  }
 
-  // Initialize scales
-  const x = d3.scaleTime();
-  const x2 = d3.scaleTime();
-  const y = d3.scaleLinear();
-  const y2 = d3.scaleLinear();
+  return timeFormats.ye(date);
+};
 
-  // Create axises
-  const xAxis = d3.axisBottom(x);
-  const xAxis2 = d3.axisBottom(x2);
-  const yAxis = d3.axisLeft(y);
+class AttributeChart extends React.Component {
+  constructor(props) {
+    super(props);
 
-  let multiFormat;
-  let formatMillisecond;
-  let formatSecond;
-  let formatMinute;
-  let formatHour;
-  let formatDay;
-  let formatWeek;
-  let formatMonth;
-  let formatYear;
+    this.state = { chartBaseLoaded: false, width: 300 };
 
-  // Change locale, then load data
-  d3.json('node_modules/d3-time-format/locale/sv-SE.json', (error, locale) => {
-    if (error) throw error;
+    this.chart = {};
 
-    d3.timeFormatDefaultLocale(locale);
+    this.loadD3 = this.loadD3.bind(this);
+    this.updateD3 = this.updateD3.bind(this);
+    this.interpretBrush = this.interpretBrush.bind(this);
+    this.interpretZoom = this.interpretZoom.bind(this);
+  }
 
-    formatMillisecond = d3.timeFormat('.%L');
-    formatSecond = d3.timeFormat(':%S');
-    formatMinute = d3.timeFormat('%H:%M');
-    formatHour = d3.timeFormat('%H:%M');
-    formatDay = d3.timeFormat('%a %-d/%-m');
-    formatWeek = d3.timeFormat('%a %-d/%-m');
-    formatMonth = d3.timeFormat('%B');
-    formatYear = d3.timeFormat('%Y');
+  componentWillMount() {
+    this.loadD3();
+  }
 
-    multiFormat = (date) => {
-      let format;
-      if (d3.timeSecond(date) < date) {
-        format = formatMillisecond(date);
-      } else if (d3.timeMinute(date) < date) {
-        format = formatSecond(date);
-      } else if (d3.timeHour(date) < date) {
-        format = formatMinute(date);
-      } else if (d3.timeDay(date)) {
-        format = formatHour(date);
-      } else if (d3.timeMonth(date)) {
-        format = (d3.timeWeek(date) < date ? formatDay : formatWeek)(date);
-      } else if (d3.timeYear(date) < date) {
-        format = formatMonth(date);
-      } else {
-        format = formatYear(date);
-      }
-      return format;
+  componentDidUpdate() {
+    this.updateD3();
+  }
+
+  componentWillUnmount() {
+    this.chart.brush.on('brush end', null);
+    this.chart.zoom.on('zoom', null);
+  }
+
+  loadD3() {
+    this.chart.main = {
+      height: 170,
+      margins: {
+        top: 20,
+        right: 20,
+        bottom: 110,
+        left: 40,
+      },
     };
 
-    // Load data, then initialize chart
-    $.getJSON(jsonFile, init);
-  });
+    this.chart.control = {
+      height: 40,
+      margins: {
+        top: 230,
+        right: 20,
+        bottom: 30,
+        left: 40,
+      },
+    };
 
+    this.chart.svgHeight = this.chart.main.height + this.chart.main.margins.top + this.chart.main.margins.bottom;
 
-  // called once the data is loaded
-  const init = (jsonData) => {
-    data = jsonData;
+    // Scales
+    this.chart.main.x = d3ScaleTime();
+    this.chart.main.y = d3ScaleLinear();
+    this.chart.control.x = d3ScaleTime();
+    this.chart.control.y = d3ScaleLinear();
 
-    // Format data correctly
-    data.forEach((dt) => {
-      const d = dt;
-      d.xtime = new Date(d.xtime * 1000);
-      d.yvalue = +d.yvalue;
-    });
+    // Axises
+    this.chart.main.xAxis = d3AxisBottom(this.chart.main.x);
+    this.chart.control.xAxis = d3AxisBottom(this.chart.control.x);
+    this.chart.yAxis = d3AxisLeft(this.chart.main.y);
 
-    // Set domains
-    xExtent = d3.extent(data, (d) => { return d.xtime; });
-    yExtent = [0, d3.max(data, (d) => { return d.yvalue; }) * 1.05];
-    x.domain(xExtent);
-    y.domain(yExtent);
-    x2.domain(xExtent);
-    y2.domain(y.domain());
+    // Paths
+    this.chart.main.area = d3Area()
+      .x((p) => { return this.chart.main.x(p.time); })
+      .y1((p) => { return this.chart.main.y(p.value); })
+      .y0(this.chart.main.height)
+      .curve(d3CurveStepAfter);
+    this.chart.control.area = d3Area()
+      .x((p) => { return this.chart.control.x(p.time); })
+      .y1((p) => { return this.chart.control.y(p.value); })
+      .y0(this.chart.control.height)
+      .curve(d3CurveStepAfter);
 
-    // Path generator for areas
-    area = d3.area()
-      .x((d) => { return x(d.xtime); })
-      .y0(height)
-      .y1((d) => { return y(d.yvalue); })
-      .curve(d3.curveStepAfter);
+    // Brush and zoom
+    this.chart.brush = d3BrushX()
+      .on('brush end', this.interpretBrush);
 
-    area2 = d3.area()
-      .x((d) => { return x2(d.xtime); })
-      .y0(height2)
-      .y1((d) => { return y2(d.yvalue); })
-      .curve(d3.curveStepAfter);
-
-    zoom = d3.zoom()
+    this.chart.zoom = d3Zoom()
       .scaleExtent([1, Infinity])
-      .on('zoom', zoomed);
+      .on('zoom', this.interpretZoom);
 
-    brush = d3.brushX()
-      .on('brush end', brushed);
+    this.setState(() => { return { chartBaseLoaded: true }; });
+  }
 
+  updateD3() {
+    if (this.props.data[0] !== 0 && this.state.chartBaseLoaded === true) {
+      const chart = this.chart;
 
-    // Add clipPath
-    clipPath = svg.append('defs').append('clipPath')
-      .attr('id', 'clip')
-      .append('rect');
+      d3Select(this.mxAxis).call(chart.main.xAxis);
+      d3Select(this.myAxis).call(chart.yAxis);
+      d3Select(this.cxAxis).call(chart.control.xAxis);
+      d3Select(this.mZoom).call(chart.zoom);
+      d3Select(this.cBrush)
+        .call(chart.brush)
+        .call(chart.brush.move, chart.main.x.range());
 
-    // Add focus (main)
-    focus = svg.append('g')
-      .attr('class', 'focus')
-      .attr('transform', `translate(${margin.left},${margin.top})`);
-
-    focus.append('path')
-      .datum(data)
-      .attr('class', 'area')
-      .attr('d', area);
-
-    focus.append('g')
-      .attr('class', 'axis axis--x');
-
-    focus.append('g')
-      .attr('class', 'axis axis--y');
-
-    // Add context (slider)
-    context = svg.append('g')
-      .attr('class', 'context')
-      .attr('transform', `translate(${margin2.left},${margin2.top})`);
-
-    context.append('path')
-      .datum(data)
-      .attr('class', 'area');
-
-    context.append('g')
-      .attr('class', 'axis axis--x');
-
-    context.append('g')
-      .attr('class', 'brush');
-
-    // Add zoom-functionality
-    svg.append('rect')
-      .attr('class', 'zoom')
-      .attr('height', height)
-      .attr('transform', `translate(${margin.left},${margin.top})`);
-
-    // render the chart
-    render();
-  };
-
-  const render = () => {
-    // get dimensions based on obj size
-    width = $(divObj).innerWidth() - (margin.left + margin.right);
-
-    // update x and y scales to new dimensions
-    x.range([0, width]);
-    x2.range([0, width]);
-    y.range([height, 0]);
-    y2.range([height2, 0]);
-
-    // update svg elements to new dimensions
-    svg.attr('width', width + margin.right + margin.left)
-      .attr('height', height + margin.top + margin.bottom);
-
-    // update the axis and line xAxis.ticks(d3.timeHour.every(12));
-    xAxis.tickFormat(multiFormat)
-      .ticks(Math.floor(width / 150));
-
-    xAxis2.tickFormat(multiFormat)
-      .ticks(Math.floor(width / 150));
-
-    xAxis.scale(x);
-    xAxis2.scale(x2);
-    yAxis.scale(y);
-
-    zoom.translateExtent([[0, 0], [width, height]])
-      .extent([[0, 0], [width, height]]);
-
-    brush.extent([[0, 0], [width, height2]]);
-
-    // Transform
-    clipPath.attr('width', width)
-      .attr('height', height);
-
-    focus.select('.axis--x')
-      .attr('transform', `translate(0, ${height})`)
-      .call(xAxis);
-
-    focus.select('.axis--y')
-      .call(yAxis);
-
-    context.select('path')
-      .attr('d', area2);
-
-    context.select('.axis--x')
-      .attr('transform', `translate(0, ${height2})`)
-      .call(xAxis2);
-
-    context.select('.brush')
-      .call(brush)
-      .call(brush.move, x.range());
-
-    svg.select('.zoom')
-      .attr('width', width)
-      .call(zoom);
-
-    if (firstLoad === true) {
-      let minDate = new Date(xExtent[1].getTime() - 3.456e8);
-      minDate = xExtent[0] > minDate ? xExtent[0] : minDate;
-
-      currentBrush = [minDate, xExtent[1]];
-      firstLoad = false;
+      const width = this.svgParent.clientWidth;
+      if (this.state.width !== width) {
+        this.setState(() => { return { width: this.svgParent.clientWidth }; });
+      }
     }
+  }
 
-    brushed(currentBrush.map(x2));
-  };
+  interpretBrush(t) {
+    const chart = this.chart;
 
-  const brushed = (t) => {
     let s;
-
     if (t) {
       s = t;
     } else {
-      if (d3.event.sourceEvent === null || d3.event.sourceEvent.type === 'zoom') return; // ignore brush-by-zoom
-      s = d3.event.selection || x2.range();
+      if (d3Event.sourceEvent === null || d3Event.sourceEvent.type === 'zoom') {
+        return;
+      }
+      s = d3Event.selection || chart.control.x.range();
     }
 
-    currentBrush = s.map(x2.invert, x2);
+    chart.main.x.domain(s.map(chart.control.x.invert, chart.control.x));
 
-    x.domain(currentBrush);
-    focus.select('.area').attr('d', area);
-    focus.select('.axis--x').call(xAxis);
-    svg.select('.zoom').call(zoom.transform, d3.zoomIdentity
-      .scale(width / (s[1] - s[0]))
-      .translate(-s[0], 0));
-  };
+    d3Select(this.mArea).attr('d', chart.main.area(this.props.data));
+    d3Select(this.mxAxis).call(chart.main.xAxis);
+    d3Select(this.mZoom).call(
+      chart.zoom.transform,
+      d3ZoomIdentity
+        .scale(this.state.width / (s[1] - s[0]))
+        .translate(-s[0], 0)
+    );
+  }
 
-  const zoomed = () => {
-    if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'brush') return; // ignore zoom-by-brush
-    const t = d3.event.transform;
+  interpretZoom() {
+    if (d3Event.sourceEvent && d3Event.sourceEvent.type === 'brush') {
+      return;
+    }
 
-    currentBrush = t.rescaleX(x2).domain();
+    const t = d3Event.transform;
+    const chart = this.chart;
 
-    x.domain(currentBrush);
-    focus.select('.area').attr('d', area);
-    focus.select('.axis--x').call(xAxis);
-    context.select('.brush').call(brush.move, x.range().map(t.invertX, t));
-  };
+    chart.main.x.domain(t.rescaleX(chart.control.x).domain());
 
-  return { render };
+    d3Select(this.mArea).attr('d', chart.main.area(this.props.data));
+    d3Select(this.mxAxis).call(chart.main.xAxis);
+    d3Select(this.cBrush).call(
+      chart.brush.move,
+      chart.main.x.range().map(t.invertX, t)
+    );
+  }
+
+  render() {
+    if (this.props.data[0] === 0 || this.state.chartBaseLoaded === false) {
+      return (<p>Loading...</p>);
+    }
+
+    const chart = this.chart;
+    const data = this.props.data;
+
+    const svgWidth = this.state.width;
+    const width = svgWidth - chart.main.margins.left - chart.main.margins.right;
+
+    const xRange = d3Extent(data, (p) => { return p.time; });
+    const yRange = [0, d3Max(data, (p) => { return p.value; }) * 1.05];
+
+    chart.main.x.domain(xRange);
+    chart.main.y.domain(yRange);
+    chart.control.x.domain(xRange);
+    chart.control.y.domain(yRange);
+
+    chart.main.x.range([0, width]);
+    chart.main.y.range([chart.main.height, 0]);
+    chart.control.x.range([0, width]);
+    chart.control.y.range([chart.control.height, 0]);
+
+    chart.main.xAxis
+      .tickFormat(selectTimeFormat)
+      .ticks(Math.floor(width / 150))
+      .scale(chart.main.x);
+    chart.control.xAxis
+      .tickFormat(selectTimeFormat)
+      .ticks(Math.floor(width / 150))
+      .scale(chart.control.x);
+    chart.yAxis
+      .scale(chart.main.y);
+
+    chart.zoom
+      .translateExtent([[0, 0], [width, chart.main.height]])
+      .extent([[0, 0], [width, chart.main.height]]);
+    chart.brush
+      .extent([[0, 0], [width, chart.control.height]]);
+
+    return (
+      <div ref={(node) => { this.svgParent = node; }}>
+        <svg width={svgWidth} height={this.chart.svgHeight}>
+          <defs>
+            <clipPath id="clip">
+              <rect width={width} height={chart.main.height} />
+            </clipPath>
+          </defs>
+          <g className="focus" transform={`translate(${chart.main.margins.left},${chart.main.margins.top})`}>
+            <path
+              ref={(node) => { this.mArea = node; }}
+              className="area"
+              d={chart.main.area(data)}
+            />
+            <g
+              ref={(node) => { this.mxAxis = node; }}
+              className="axis axis--x"
+              transform={`translate(0,${chart.main.height})`}
+            />
+            <g ref={(node) => { this.myAxis = node; }} className="axis axis--y" />
+          </g>
+          <g
+            className="context"
+            transform={`translate(${chart.control.margins.left},${chart.control.margins.top})`}
+          >
+            <path className="area" d={chart.control.area(data)} />
+            <g
+              ref={(node) => { this.cxAxis = node; }}
+              className="axis axis--x"
+              transform={`translate(0,${chart.control.height})`}
+            />
+            <g ref={(node) => { this.cBrush = node; }} className="brush" />
+          </g>
+          <rect
+            ref={(node) => { this.mZoom = node; }}
+            className="zoom"
+            height={chart.main.height}
+            width={width}
+            transform={`translate(${chart.main.margins.left},${chart.main.margins.top})`}
+          />
+        </svg>
+      </div>
+    );
+  }
+}
+
+AttributeChart.propTypes = {
+  data: PropTypes.array.isRequired,
 };
 
-export default AttributeChartRenderer;
+export default AttributeChart;

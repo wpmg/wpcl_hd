@@ -35,7 +35,7 @@ class DiskInfoPage extends React.Component {
         });
       });
 
-    fetch(`/api/v1/disk/${diskId}/attribute/latest`, { credentials: 'include' })
+    fetch(`/api/v1/disk/${diskId}/attribute/all`, { credentials: 'include' })
       .then((response) => {
         return response.json();
       })
@@ -61,7 +61,11 @@ class DiskInfoPage extends React.Component {
     return (
       <div>
         <DiskHeadModule diskId={diskId} fetchedStatus={state.diskFetchedStatus} disk={disk} />
-        <DiskAttributesModule fetchedStatus={state.attributesFetchedStatus} attributes={attributes} />
+        <DiskAttributesModule
+          diskId={diskId}
+          fetchedStatus={state.attributesFetchedStatus}
+          attributes={attributes}
+        />
         <DiskInfoModule fetchedStatus={state.diskFetchedStatus} disk={disk} />
       </div>
     );

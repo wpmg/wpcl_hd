@@ -4,13 +4,11 @@ import Disk from '../models/disk';
 
 const IsAuthenticated = (authority) => {
   return (req, res, next) => {
-    if ((
-        typeof authority === 'undefined'
-        && req.isAuthenticated()
-      ) || (
-        typeof authority !== 'undefined'
-        && authority >= req.user.authority
-    )) {
+    const auth = authority || 3;
+    if (
+      req.isAuthenticated()
+      && auth >= req.user.authority
+    ) {
       return next();
     }
 
@@ -28,8 +26,22 @@ const Api = (router) => {
     });
   });
 
+  router.get('/disk/:id/attribute/:attrId/all', IsAuthenticated(3), (req, res) => {
+    Disk.aggregate([
+      { $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
+      { $project: { _id: 0, attr_section: 1 } },
+      { $unwind: '$attr_section' },
+      { $replaceRoot: { newRoot: '$attr_section' } },
+      { $match: { attr_id: parseInt(req.params.attrId, 10) } },
+      { $project: { values: 1 } },
+    ])
+    .exec((err, result) => {
+      res.json(result[0].values);
+    });
+  });
+
   router.get('/disk/:id/attribute/:attrId', IsAuthenticated(3), (req, res) => {
-    if (req.params.attrId === 'latest') {
+    if (req.params.attrId === 'all') {
       Disk.aggregate([
         { $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
         { $addFields: { 'attr_section.updtime': '$updated' } },

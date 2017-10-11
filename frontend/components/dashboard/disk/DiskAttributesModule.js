@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { last as arrLast } from 'lodash';
 
-const AttributesModuleTableBody = ({ attributes }) => {
+import AttributeModal from './AttributeModal';
+
+const AttributesModuleTableBody = ({ attributes, changeModalAttribute }) => {
   if (typeof attributes === 'undefined') {
     return null;
   }
@@ -23,22 +25,15 @@ const AttributesModuleTableBody = ({ attributes }) => {
               <td>{arrLast(attribute.values).raw}</td>
               <td>{attribute.thresh}</td>
               <td>
-                <div className="btn-group">
-                  <button type="button" className="btn btn-sm btn-dark">Graph</button>
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-dark dropdown-toggle dropdown-toggle-split"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
-                    <span className="sr-only">Toggle Dropdown</span>
-                  </button>
-                  <div className="dropdown-menu dropdown-menu-right">
-                    <a className="dropdown-item" href="#a">Graph raw</a>
-                    <a className="dropdown-item" href="#a">See data</a>
-                  </div>
-                </div>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-dark"
+                  data-toggle="modal"
+                  data-target="#attributeModal"
+                  onClick={() => { changeModalAttribute(attribute.attr_id); }}
+                >
+                  Graph
+                </button>
               </td>
             </tr>
           );
@@ -48,49 +43,85 @@ const AttributesModuleTableBody = ({ attributes }) => {
   );
 };
 
-const DiskAttributesModule = ({ fetchedStatus, attributes }) => {
-  if (fetchedStatus === 'not-fetched') {
+class DiskAttributesModule extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { modalAttribute: { attr_id: 0 } };
+
+    this.changeModalAttribute = this.changeModalAttribute.bind(this);
+  }
+
+  changeModalAttribute(attributeId) {
+    if (attributeId === this.state.modalAttribute.attr_id) {
+      return false;
+    }
+
+    const attributeIndex = this.props.attributes.findIndex((attribute) => {
+      if (attribute.attr_id === attributeId) {
+        return true;
+      }
+
+      return false;
+    });
+
+    if (attributeIndex > -1) {
+      this.setState(() => {
+        return { modalAttribute: this.props.attributes[attributeIndex] };
+      });
+    }
+
+    return true;
+  }
+
+  render() {
+    const props = this.props;
+
+    if (props.fetchedStatus === 'not-fetched') {
+      return (
+        <div>
+          <h2 className="h2">Attributes section</h2>
+          <p>Fetching attributes.</p>
+        </div>
+      );
+    } else if (props.fetchedStatus === 'couldnt-fetch') {
+      return (
+        <div>
+          <h2 className="h2">Attributes section</h2>
+          <p>Couldn&apos;t fetch attributes.</p>
+        </div>
+      );
+    }
+
     return (
       <div>
         <h2 className="h2">Attributes section</h2>
-        <p>Fetching attributes.</p>
-      </div>
-    );
-  } else if (fetchedStatus === 'couldnt-fetch') {
-    return (
-      <div>
-        <h2 className="h2">Attributes section</h2>
-        <p>Couldn&apos;t fetch attributes.</p>
+        <AttributeModal diskId={props.diskId} attribute={this.state.modalAttribute} />
+        <table className="table table-hover table-sm table-responsive">
+          <thead className="thead-inverse">
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Value</th>
+              <th>Thresh</th>
+              <th>Type</th>
+              <th>Raw</th>
+              <th>Failed</th>
+              <th>Raw*</th>
+              <th>Thresh*</th>
+              <th />
+            </tr>
+          </thead>
+          <AttributesModuleTableBody attributes={props.attributes} changeModalAttribute={this.changeModalAttribute} />
+        </table>
       </div>
     );
   }
-
-  return (
-    <div>
-      <h2 className="h2">Attributes section</h2>
-      <table className="table table-hover table-sm table-responsive">
-        <thead className="thead-inverse">
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Value</th>
-            <th>Thresh</th>
-            <th>Type</th>
-            <th>Raw</th>
-            <th>Failed</th>
-            <th>Raw*</th>
-            <th>Thresh*</th>
-            <th />
-          </tr>
-        </thead>
-        <AttributesModuleTableBody attributes={attributes} />
-      </table>
-    </div>
-  );
-};
+}
 
 AttributesModuleTableBody.propTypes = {
   attributes: PropTypes.array,
+  changeModalAttribute: PropTypes.func.isRequired,
 };
 
 AttributesModuleTableBody.defaultProps = {
