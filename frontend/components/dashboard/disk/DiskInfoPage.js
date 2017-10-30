@@ -5,6 +5,11 @@ import DiskHeadModule from './DiskHeadModule';
 import DiskAttributesModule from './DiskAttributesModule';
 import DiskInfoModule from './DiskInfoModule';
 
+/*
+ * class DiskInfoPage
+ * renders a page for an individual disk
+ */
+
 class DiskInfoPage extends React.Component {
   constructor(props) {
     super(props);
@@ -19,6 +24,7 @@ class DiskInfoPage extends React.Component {
   componentWillMount() {
     const diskId = this.props.match.params.diskId;
 
+    // Fetch disk data (not attributes)
     fetch(`/api/v1/disk/${diskId}`, { credentials: 'include' })
       .then((response) => {
         return response.json();
@@ -35,6 +41,7 @@ class DiskInfoPage extends React.Component {
         });
       });
 
+    // Fetch latest disk attributes
     fetch(`/api/v1/disk/${diskId}/attribute/all`, { credentials: 'include' })
       .then((response) => {
         return response.json();

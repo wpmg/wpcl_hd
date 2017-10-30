@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { last as arrLast } from 'lodash';
 
+import octicons from 'octicons';
+
 import AttributeModal from './AttributeModal';
 
 const AttributesModuleTableBody = ({ attributes, changeModalAttribute }) => {
@@ -27,13 +29,14 @@ const AttributesModuleTableBody = ({ attributes, changeModalAttribute }) => {
               <td>
                 <button
                   type="button"
-                  className="btn btn-sm btn-dark"
+                  className="btn btn-sm btn-secondary"
                   data-toggle="modal"
                   data-target="#attributeModal"
                   onClick={() => { changeModalAttribute(attribute.attr_id); }}
-                >
-                  Graph
-                </button>
+                  dangerouslySetInnerHTML={
+                    { __html: octicons.book.toSVG({ width: '1em', height: '1em' }) }
+                  }
+                />
               </td>
             </tr>
           );

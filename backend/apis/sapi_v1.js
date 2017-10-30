@@ -71,6 +71,28 @@ const Api = (router) => {
     }
   });
 
+  router.get('/disk/:id/customText', IsAuthenticated(2), (req, res) => {
+    Disk.findOne({ _id: req.params.id }, '-_id customText')
+      .exec((err, result) => {
+        res.json({
+          customText: (typeof result.customText === 'undefined') ? '' : result.customText,
+        });
+      });
+  });
+
+  router.put('/disk/:id/customText', IsAuthenticated(2), (req, res) => {
+    Disk.findOneAndUpdate(
+      { _id: req.params.id },
+      { $set: { customText: req.body.customText } },
+      { projection: { _id: 0, customText: 1 }, new: true }
+    )
+      .exec((err, result) => {
+        res.json({
+          customText: (typeof result.customText === 'undefined') ? '' : result.customText,
+        });
+      });
+  });
+
   router.get('/disk/:id', IsAuthenticated(3), (req, res) => {
     if (req.params.id === 'all') {
       const result = {};

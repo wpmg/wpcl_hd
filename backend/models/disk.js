@@ -29,6 +29,7 @@ const diskSchema = new Schema({
   added: Number,
   updated: Number,
   location: String,
+  customText: String,
   internal_name: String,
   info_section: [infoSchema],
   attr_section: [attrSchema],

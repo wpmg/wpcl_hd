@@ -3,6 +3,13 @@ import PropTypes from 'prop-types';
 
 import { DiskTimeFormat } from '../../../helpers/dates';
 
+import DiskCustomText from './DiskCustomText';
+
+/*
+ * class DiskHeadModule
+ * renders the table with the basic data (not attributes nor info)
+ */
+
 const DiskHeadModule = ({ diskId, fetchedStatus, disk }) => {
   if (fetchedStatus === 'not-fetched') {
     return (
@@ -22,7 +29,9 @@ const DiskHeadModule = ({ diskId, fetchedStatus, disk }) => {
 
   return (
     <div>
-      <h1 className="h1 page-h">{disk['Device Model']} <small>{disk['Serial Number']}</small></h1>
+      <h1 className="h1 page-h">
+        {disk['Device Model']} <small>{disk['Serial Number']} </small>
+      </h1>
       <table className="table table-hover table-sm table-responsive">
         <thead className="thead-inverse"><tr><th>Variable</th><th>Data</th></tr></thead>
         <tbody>
@@ -33,6 +42,7 @@ const DiskHeadModule = ({ diskId, fetchedStatus, disk }) => {
           <tr><td>Physical location</td><td>{disk.location}</td></tr>
           <tr><td>First seen:</td><td>{DiskTimeFormat(disk.added)}</td></tr>
           <tr><td>Last seen:</td><td>{DiskTimeFormat(disk.updated)}</td></tr>
+          <DiskCustomText diskId={diskId} customText={disk.customText} />
         </tbody>
       </table>
     </div>
