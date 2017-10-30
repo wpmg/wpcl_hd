@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 
 import octicons from 'octicons';
 
+import ajax from '../../../helpers/ajax';
+
 class DiskCustomText extends React.Component {
   constructor(props) {
     super(props);
@@ -13,65 +15,37 @@ class DiskCustomText extends React.Component {
     this.enterEditMode = this.enterEditMode.bind(this);
     this.exitEditMode = this.exitEditMode.bind(this);
     this.saveCustomText = this.saveCustomText.bind(this);
-    this.setCustomTextLocally = this.setCustomTextLocally.bind(this);
+    this.setEditText = this.setEditText.bind(this);
   }
 
-  setCustomTextLocally(event) {
+  setEditText(event) {
     this.setState({ editText: event.target.value });
   }
 
   saveCustomText() {
-    this.setState(() => {
-      return { saving: true };
-    });
+    this.setState({ saving: true });
 
-    const customText = JSON.stringify({ customText: this.state.editText });
-    console.log(customText);
-    fetch(
-      `/api/v1/disk/${this.props.diskId}/customText`,
-      {
-        credentials: 'include',
-        method: 'PUT',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: customText,
-      }
-    )
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        console.log(json);
+    ajax.putJson({
+      url: `/api/v1/disk/${this.props.diskId}/customText`,
+      body: { customText: this.state.editText },
+      successCallback: (json) => {
         this.setState({ customText: json.customText, editMode: false, editText: json.customText, saving: false });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      },
+    });
   }
 
   // Get customText before edit mode is entered
   enterEditMode() {
-    fetch(`/api/v1/disk/${this.props.diskId}/customText`, { credentials: 'include' })
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        console.log(json);
-        this.setState(() => {
-          return { customText: json.customText, editMode: true, editText: json.customText };
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    ajax.getJson({
+      url: `/api/v1/disk/${this.props.diskId}/customText`,
+      successCallback: (json) => {
+        this.setState({ customText: json.customText, editMode: true, editText: json.customText });
+      },
+    });
   }
 
   exitEditMode() {
-    this.setState(() => {
-      return { editMode: false };
-    });
+    this.setState({ editMode: false });
   }
 
   render() {
@@ -118,7 +92,7 @@ class DiskCustomText extends React.Component {
               className="form-control"
               aria-label="Custom message"
               value={this.state.editText}
-              onChange={this.setCustomTextLocally}
+              onChange={this.setEditText}
               disabled={disabled}
             />
             <span className="input-group-btn">

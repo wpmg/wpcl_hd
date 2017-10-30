@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import ajax from '../../../helpers/ajax';
 import { DiskTimeFormat } from '../../../helpers/dates';
 import AttributeChart from './AttributeChart';
 
@@ -35,23 +36,12 @@ class AttributeModal extends React.Component {
     const diskId = this.props.diskId;
     const attributeId = attribute.attr_id;
 
-    fetch(`/api/v1/disk/${diskId}/attribute/${attributeId}/all`, { credentials: 'include' })
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        this.setState(() => {
-          return { data: json.sort((a, b) => {
-            return b.time - a.time;
-          }) };
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-        this.setState(() => {
-          return { data: [0] };
-        });
-      });
+    ajax.getJson({
+      url: `/api/v1/disk/${diskId}/attribute/${attributeId}/all`,
+      successCallback: (json) => {
+        this.setState({ data: json.sort((a, b) => { return b.time - a.time; }) });
+      },
+    });
 
     return true;
   }

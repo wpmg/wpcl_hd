@@ -1,5 +1,7 @@
 import React from 'react';
 
+import ajax from '../../../helpers/ajax';
+
 import DisksList from './DisksList';
 
 class DisksOverviewPage extends React.Component {
@@ -9,21 +11,16 @@ class DisksOverviewPage extends React.Component {
   }
 
   componentWillMount() {
-    fetch('/api/v1/disk/all', { credentials: 'include' })
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        this.setState(() => {
-          return { disks: json, disksFetchedStatus: 'fetched' };
-        });
-      })
-      .catch((error) => {
+    ajax.getJson({
+      url: '/api/v1/disk/all',
+      successCallback: (json) => {
+        this.setState({ disks: json, disksFetchedStatus: 'fetched' });
+      },
+      errorCallback: (error) => {
         console.log(error);
-        this.setState(() => {
-          return { disksFetchedStatus: 'couldnt-fetch' };
-        });
-      });
+        this.setState({ disksFetchedStatus: 'couldnt-fetch' });
+      },
+    });
   }
 
   render() {

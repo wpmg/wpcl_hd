@@ -71,7 +71,7 @@ const Api = (router) => {
     }
   });
 
-  router.get('/disk/:id/customText', IsAuthenticated(2), (req, res) => {
+  router.get('/disk/:id/customText', IsAuthenticated(3), (req, res) => {
     Disk.findOne({ _id: req.params.id }, '-_id customText')
       .exec((err, result) => {
         res.json({
