@@ -45,7 +45,7 @@ ul.nav-sidebar {
 
   .active {
     a, a:hover, a:focus {
-      @include color-yiq(theme-color("primary"));
+      color: color-yiq(theme-color("primary"));
       background-color: theme-color("primary");
     }
   }
@@ -78,6 +78,13 @@ h1, h2, h3, h4, h5, h6 {
     border-bottom: 1px solid $gray-200;
   }
 }
+
+.octicon {
+  display: inline-block;
+  vertical-align: text-top;
+  fill: currentColor;
+}
+
 
 .area {
   fill: steelblue;
