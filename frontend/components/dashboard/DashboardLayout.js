@@ -6,7 +6,7 @@ import Menu from './Menu';
 
 const DashboardLayout = () => {
   return (
-    <div> {/* className="container-fluid" */}
+    <div>
       <nav className="navbar navbar-dark bg-dark fixed-top navbar-expand-md">
         <div className="navbar-header">
           <a className="navbar-brand" href="/dashboard">WPCL HD CC</a>
