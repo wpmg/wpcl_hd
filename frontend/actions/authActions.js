@@ -1,4 +1,5 @@
-import { GetAuth } from '../apis/capi_auth';
+import ajax from '../helpers/ajax';
+import initialState from '../reducers/initialState';
 
 const AUTH_ACTIONS = {
   AUTH_CONTROLLED: 'AUTH_CONTROLLED',
@@ -13,14 +14,15 @@ const actionAuthFetched = (auth) => {
 
 const fetchAuth = () => {
   return (dispatch) => {
-    return (
-      GetAuth()
-        .then((auth) => {
-          dispatch(actionAuthFetched(auth));
-        }).catch((error) => {
-          throw (error);
-        })
-    );
+    return (ajax.getJson({
+      url: '/api/v1/authenticate',
+      successCallback: (json) => {
+        dispatch(actionAuthFetched(json.data.attributes));
+      },
+      errorCallback: () => {
+        dispatch(actionAuthFetched(initialState));
+      },
+    }));
   };
 };
 

@@ -2,9 +2,17 @@ import mongoose from 'mongoose';
 
 import Disk from '../models/disk';
 
+const jsonApiMediaType = 'application/vnd.api+json';
+const headerContentTypeJsonApiMediaType = { 'Content-Type': jsonApiMediaType };
+const headerWwwAuthenticate = { 'WWW-Authenticate': 'FormBased' };
+
+// Function for checking if user is (1) Authenticated and (2) has proper authority
 const IsAuthenticated = (authority) => {
   return (req, res, next) => {
+    // Authority levels are (highest) 1, 2, 3 (lowest), where 3 is standard
     const auth = authority || 3;
+
+    // Check if (1) and (2)
     if (
       req.isAuthenticated()
       && auth >= req.user.authority
@@ -12,17 +20,44 @@ const IsAuthenticated = (authority) => {
       return next();
     }
 
-    console.log('Unauthorized API attempt');
-    res.json({ error: 'Authentication failed.' });
+    // If !(1), send proper response
+    if (!req.isAuthenticated()) {
+      console.log(`Unauthorized API attempt: ${req.originalUrl}`);
+      res.set(Object.assign({}, headerContentTypeJsonApiMediaType, headerWwwAuthenticate));
+      res.status(401).json({
+        errors: [{
+          status: '401',
+          title: 'Authentication failed.',
+        }],
+      });
+      return false;
+    }
+
+    // Else, assume !(2)
+    console.log(`API action requested with low authority: ${req.user._id}/${req.user.authority} at ${req.originalUrl}`);
+    res.set(headerContentTypeJsonApiMediaType);
+    res.status(403).json({
+      errors: [{
+        status: '403',
+        title: 'Authority to low to perform requested action.',
+      }],
+    });
     return false;
   };
 };
 
 const Api = (router) => {
-  router.get('/auth', IsAuthenticated(3), (req, res) => {
+  router.get('/authenticate', IsAuthenticated(3), (req, res) => {
+    res.set(headerContentTypeJsonApiMediaType);
     res.json({
-      authority: req.user.authority,
-      username: req.user.username,
+      data: {
+        type: 'users',
+        id: req.user._id,
+        attributes: {
+          username: req.user.username,
+          authority: req.user.authority,
+        },
+      },
     });
   });
 
@@ -36,6 +71,7 @@ const Api = (router) => {
       { $project: { values: 1 } },
     ])
     .exec((err, result) => {
+      res.set(headerContentTypeJsonApiMediaType);
       res.json(result[0].values);
     });
   });
@@ -66,6 +102,7 @@ const Api = (router) => {
         },
       ])
       .exec((err, result) => {
+        res.set(headerContentTypeJsonApiMediaType);
         res.json(result);
       });
     }
@@ -74,6 +111,7 @@ const Api = (router) => {
   router.get('/disk/:id/customText', IsAuthenticated(3), (req, res) => {
     Disk.findOne({ _id: req.params.id }, '-_id customText')
       .exec((err, result) => {
+        res.set(headerContentTypeJsonApiMediaType);
         res.json({
           customText: (typeof result.customText === 'undefined') ? '' : result.customText,
         });
@@ -87,6 +125,7 @@ const Api = (router) => {
       { projection: { _id: 0, customText: 1 }, new: true }
     )
       .exec((err, result) => {
+        res.set(headerContentTypeJsonApiMediaType);
         res.json({
           customText: (typeof result.customText === 'undefined') ? '' : result.customText,
         });
@@ -101,11 +140,13 @@ const Api = (router) => {
           result[disk._id] = disk;
         })
         .on('close', () => {
+          res.set(headerContentTypeJsonApiMediaType);
           res.json(result);
         });
     } else {
       Disk.findOne({ _id: req.params.id }, '-attr_section')
         .exec((err, result) => {
+          res.set(headerContentTypeJsonApiMediaType);
           res.json(result);
         });
     }
