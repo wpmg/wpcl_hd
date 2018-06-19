@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 
-import Disk from '../models/disk';
+import User from '../../models/user';
+import Disk from '../../models/disk';
+import routerDisks from './disks';
 
 const jsonApiMediaType = 'application/vnd.api+json';
 const headerContentTypeJsonApiMediaType = { 'Content-Type': jsonApiMediaType };
@@ -60,6 +62,27 @@ const Api = (router) => {
       },
     });
   });
+
+  router.get('/users', IsAuthenticated(1), (req, res) => {
+    User.find({}, '-password').exec((err, result) => {
+      res.set(headerContentTypeJsonApiMediaType);
+      res.json(result.map((u) => {
+        return {
+          type: 'users',
+          id: u._id,
+          attributes: {
+            username: u.username,
+            authority: u.authority,
+          },
+          links: {
+            self: `/users/${u._id}`,
+          },
+        };
+      }));
+    });
+  });
+
+  routerDisks(router, IsAuthenticated);
 
   router.get('/disk/:id/attribute/:attrId/all', IsAuthenticated(3), (req, res) => {
     Disk.aggregate([

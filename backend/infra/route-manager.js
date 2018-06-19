@@ -1,7 +1,7 @@
 import express from 'express';
 
 import baseManager from './base-manager';
-import apiV1 from '../apis/sapi_v1';
+import apiV1 from '../apis/v1/api';
 
 const IsAuthenticated = (req, res, next) => {
   // if user is authenticated in the session, call the next() to call the next request handler

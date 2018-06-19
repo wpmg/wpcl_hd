@@ -3,22 +3,15 @@ import PropTypes from 'prop-types';
 
 import ajax from '../../../helpers/ajax';
 
-import DiskHeadModule from './DiskHeadModule';
-import DiskAttributesModule from './DiskAttributesModule';
-import DiskInfoModule from './DiskInfoModule';
+import DiskPresentational from './DiskPresentational';
 
-/*
- * class DiskInfoPage
- * renders a page for an individual disk
- */
-
-class DiskInfoPage extends React.Component {
+class DiskContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      disk: undefined,
+      disk: {},
       diskFetchedStatus: 'not-fetched',
-      attributes: undefined,
+      attributes: [],
       attributesFetchedStatus: 'not-fetched',
     };
   }
@@ -54,25 +47,21 @@ class DiskInfoPage extends React.Component {
   render() {
     const state = this.state;
     const diskId = this.props.match.params.diskId;
-    const disk = state.disk;
-    const attributes = state.attributes;
 
     return (
-      <div>
-        <DiskHeadModule diskId={diskId} fetchedStatus={state.diskFetchedStatus} disk={disk} />
-        <DiskAttributesModule
-          diskId={diskId}
-          fetchedStatus={state.attributesFetchedStatus}
-          attributes={attributes}
-        />
-        <DiskInfoModule fetchedStatus={state.diskFetchedStatus} disk={disk} />
-      </div>
+      <DiskPresentational
+        diskId={diskId}
+        disk={state.disk}
+        diskFetchedStatus={state.diskFetchedStatus}
+        attributes={state.attributes}
+        attributesFetchedStatus={state.attributesFetchedStatus}
+      />
     );
   }
 }
 
-DiskInfoPage.propTypes = {
+DiskContainer.propTypes = {
   match: PropTypes.object.isRequired,
 };
 
-export default DiskInfoPage;
+export default DiskContainer;
